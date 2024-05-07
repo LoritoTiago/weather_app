@@ -6,3 +6,16 @@
 //
 
 import Foundation
+import SwiftUI
+
+final class WeatherViewModel: ObservableObject{
+    
+    
+    init(selectedWeather: Weather) {
+        self.selectedWeather = selectedWeather
+    }
+    
+  @Published  var selectedWeather: Weather = MockData.sampleData
+    
+    
+}

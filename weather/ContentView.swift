@@ -12,7 +12,10 @@ struct ContentView: View {
     // we use state to create variable that state can be change
     @State private var isNight=false
     
+    @StateObject var weatherView = WeatherViewModel(selectedWeather: MockData.sampleData)
+    
     var body: some View {
+        
         ZStack{
             BackgroundView(isNight: $isNight)
             
@@ -21,16 +24,27 @@ struct ContentView: View {
                 CityTextView(cityName: "Maianga, Luanda")
                 
                 
-                MainWeatherStatusView(imageName: isNight ? "moon.stars.fill" : "cloud.sun.fill", temperature: 74)
+                MainWeatherStatusView(imageName: weatherView.selectedWeather.imageName , temperature: weatherView.selectedWeather.temperature)
            
               
-                HStack(spacing:20){
-                    WeatherDayView(dayOfWeek: "TUE", imageName: "cloud.sun.fill", temperature: 74)
-                    WeatherDayView(dayOfWeek: "WED", imageName: "sun.max.fill", temperature: 88)
-                    WeatherDayView(dayOfWeek: "THU", imageName: "wind.snow", temperature: 55)
-                    WeatherDayView(dayOfWeek: "FRI", imageName: "sunset.fill", temperature: 25)
-                    WeatherDayView(dayOfWeek: "SAT", imageName: "snow", temperature: 2)
-                   
+                ScrollView(.horizontal,showsIndicators: false)
+                {
+                    
+                    HStack(spacing:5){
+    //                    WeatherDayView(dayOfWeek: "TUE", imageName: "cloud.sun.fill", temperature: 74)
+    //                    WeatherDayView(dayOfWeek: "WED", imageName: "sun.max.fill", temperature: 88)
+    //                    WeatherDayView(dayOfWeek: "THU", imageName: "wind.snow", temperature: 55)
+    //                    WeatherDayView(dayOfWeek: "FRI", imageName: "sunset.fill", temperature: 25)
+    //                    WeatherDayView(dayOfWeek: "SAT", imageName: "snow", temperature: 2)
+                        
+                        ForEach(MockData.weathers, id: \.id){ weather in
+                            WeatherDayView(dayOfWeek: weather.name, imageName: weather.imageName, temperature: weather.temperature,isSelected: weatherView.selectedWeather.name == weather.name).onTapGesture {
+                                
+                                weatherView.selectedWeather = weather
+                            }
+                        }
+                       
+                    }
                 }
                 Spacer()
                 
@@ -52,30 +66,7 @@ struct ContentView: View {
     ContentView()
 }
 
-struct WeatherDayView: View {
-    
-    var dayOfWeek: String
-    var imageName: String
-    var temperature: Int
-    var body: some View {
-      
-            VStack{
-                Text(dayOfWeek).font(.system(size: 16, weight: .medium, design: .default)).foregroundColor(.white)
-                
-                
-                
-                Image(systemName: imageName)
-                    .symbolRenderingMode(.multicolor)
-                    .resizable()
-                    //.foregroundColor(.pink)
-                    //.foregroundStyle(.white, .yellow)
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 60, height: 60)
-                Text("\(temperature)º").font(.system(size: 28, weight: .medium, design: .default)).foregroundColor(.white)
-            }
-        
-    }
-}
+
 
 struct BackgroundView: View {
   
